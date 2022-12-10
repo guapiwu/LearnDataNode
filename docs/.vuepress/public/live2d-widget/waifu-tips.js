@@ -22,12 +22,11 @@ function loadWidget(config) {
 			<div id="waifu-tips"></div>
 			<canvas id="live2d" width="800" height="800"></canvas>
 			<div id="waifu-tool">
-				<span class="fa fa-lg fa-comment"></span>
+			    <!-- <span class="fa fa-lg fa-comment"></span> -->
 				<span class="fa fa-lg fa-paper-plane"></span>
 				<span class="fa fa-lg fa-user-circle"></span>
 				<span class="fa fa-lg fa-street-view"></span>
 				<span class="fa fa-lg fa-camera-retro"></span>
-				<span class="fa fa-lg fa-info-circle"></span>
 				<span class="fa fa-lg fa-times"></span>
 			</div>
 		</div>`);
@@ -59,7 +58,7 @@ function loadWidget(config) {
 	}, 1000);
 
 	(function registerEventListener() {
-		document.querySelector("#waifu-tool .fa-comment").addEventListener("click", showHitokoto);
+		//document.querySelector("#waifu-tool .fa-comment").addEventListener("click", showHitokoto);
 		document.querySelector("#waifu-tool .fa-paper-plane").addEventListener("click", () => {if (window.Asteroids) {
 				if (!window.ASTEROIDSPLAYERS) window.ASTEROIDSPLAYERS = [];
 				window.ASTEROIDSPLAYERS.push(new Asteroids());
@@ -77,9 +76,6 @@ function loadWidget(config) {
 			showMessage("照好了嘛，是不是很可爱呢？", 6000, 9);
 			Live2D.captureName = "photo.png";
 			Live2D.captureFrame = true;
-		});
-		document.querySelector("#waifu-tool .fa-info-circle").addEventListener("click", () => {
-			open("https://github.com/stevenjoezhang/live2d-widget");
 		});
 		document.querySelector("#waifu-tool .fa-times").addEventListener("click", () => {
 			localStorage.setItem("waifu-display", Date.now());
@@ -161,11 +157,11 @@ function loadWidget(config) {
 
 	(function initModel() {
 		let modelId = localStorage.getItem("modelId"),
-			modelTexturesId = localStorage.getItem("modelTexturesId");
+		modelTexturesId = localStorage.getItem("modelTexturesId");
 		if (modelId === null) {
 			// 首次访问加载 指定模型 的 指定材质
-			modelId = 5; // 模型 ID，原本为 1
-			modelTexturesId = 2; // 材质 ID，原本为 53
+			modelId = 6; // 模型 ID，原本为 1
+			modelTexturesId = 15; // 材质 ID，原本为 53
 		}
 		loadModel(modelId, modelTexturesId);
 		fetch(waifuPath)
@@ -175,7 +171,14 @@ function loadWidget(config) {
 					for (let { selector, text } of result.mouseover) {
 						if (!event.target.matches(selector)) continue;
 						text = randomSelection(text);
-						text = text.replace("{text}", event.target.innerText);
+						var textt = event.target.innerText
+						if (textt.indexOf("open") >= 0) {
+							textt = textt.substring(0,textt.lastIndexOf('open'));
+						}
+						if (textt == "") {
+							textt = event.target.getAttribute("aria-label");
+						}
+						text = text.replace("{text}", textt);
 						showMessage(text, 4000, 8);
 						return;
 					}
